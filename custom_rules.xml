@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="HaskellActivity_custom_rules" default="help">
+
+  <target name="-pre-compile" >
+    <uptodate property="cabal-x86-configure.notRequired"
+              targetfile="obj/local/x86/setup-config" >
+      <srcfiles dir="." includes="*.cabal"/>
+    </uptodate>
+    <uptodate property="cabal-armeabi-configure.notRequired"
+              targetfile="obj/local/armeabi/setup-config" >
+      <srcfiles dir="." includes="*.cabal"/>
+    </uptodate>
+  </target>
+
+  <target name="cabal-x86-configure" unless="cabal-x86-configure.notRequired">
+    <exec executable="i686-linux-android-cabal" failonerror="true">
+      <arg value="configure" />
+      <arg value="--builddir=obj/local/x86" />
+    </exec>
+  </target>
+
+  <target name="cabal-armeabi-configure" unless="cabal-armeabi-configure.notRequired">
+    <exec executable="arm-linux-androideabi-cabal" failonerror="true">
+      <arg value="configure" />
+      <arg value="--builddir=obj/local/armeabi" />
+    </exec>
+  </target>
+
+  <target name="-post-compile" depends="cabal-x86-configure,cabal-armeabi-configure">
+
+    <exec executable="i686-linux-android-cabal" failonerror="true">
+      <arg value="build" />
+      <arg value="--builddir=obj/local/x86" />
+    </exec>
+
+    <exec executable="arm-linux-androideabi-cabal" failonerror="true">
+      <arg value="build" />
+      <arg value="--builddir=obj/local/armeabi" />
+    </exec>
+
+    <exec executable="${ndk.dir}/ndk-build" failonerror="true"/>
+  </target>
+
+  <target name="clean" depends="android_rules.clean">
+
+    <exec executable="${ndk.dir}/ndk-build" failonerror="true">
+      <arg value="clean"/>
+    </exec>
+
+    <exec executable="i686-linux-android-cabal" failonerror="true">
+      <arg value="clean" />
+      <arg value="--builddir=obj/local/x86" />
+    </exec>
+
+    <exec executable="arm-linux-androideabi-cabal" failonerror="true">
+      <arg value="clean" />
+      <arg value="--builddir=obj/local/armeabi" />
+    </exec>
+
+  </target>
+
+</project>
